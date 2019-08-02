@@ -1,39 +1,47 @@
 #include <iostream>
 #include <string>
-#include <list>
-#include <iterator>
+#include <vector>
+#include <set>
+
 using namespace std;
 
 int main(int argc, char const *argv[])
 {
     string s;
-    cin >> s;
-    list<int> l(1, 1);
-    for (size_t i = 0; i + 1 < s.size(); i++)
+    int x, y;
+    cin >> s >> x >> y;
+    vector<int> forwardCount(1, 0);
+    for (auto &&i : s)
     {
-        if (s[i] == s[i + 1])
+        if (i == 'F')
         {
-            l.back()++;
+            forwardCount.back()++;
         }
         else
         {
-            l.push_back(1);
+            forwardCount.push_back(0);
         }
     }
-    while (l.size()>2)
+
+    vector<set<int>> DP(2,{0});
+    for (size_t i = 0; i < forwardCount.size(); i++)
     {
-        if (l.front()<l.back())
+        set<int> nextDP;
+        for (auto &&xx : DP[i % 2])
         {
-            *next(l.begin())+=l.front();
-            l.pop_front();
+            nextDP.insert(xx + forwardCount[i]);
+            if(i!=0)nextDP.insert(xx - forwardCount[i]);
         }
-        else
-        {
-            *next(l.rbegin())+=l.back();
-            l.pop_back();
-        }
+        DP[i % 2] = nextDP;
     }
-    cout << max(l.front(), l.back()) << endl;
+    if (DP[0].count(x) && DP[1].count(y))
+    {
+        cout << "Yes" << endl;
+    }
+    else
+    {
+        cout << "No" << endl;
+    }
 
     return 0;
 }
