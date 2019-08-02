@@ -1,39 +1,47 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
+#include <vector>
+#include <set>
+
 using namespace std;
 
-int main(void){
+int main(int argc, char const *argv[])
+{
     string s;
-    cin >> s;
-    int xy[2];
-    cin >> xy[0] >> xy[1];
-    list<int> fList[2];//x,y
-    fList[0].push_back(0);
-    for (size_t i = 0,dir = 0; i < s.size(); i++)
+    int x, y;
+    cin >> s >> x >> y;
+    vector<int> forwardCount(1, 0);
+    for (auto &&i : s)
     {
-        if (s[i]=='F')fList[dir%2].back()++;
-        else fList[(++dir)%2].push_back(0);
-    }
-    for(size_t i = 0; i < 2; i++){
-        int sum=0;
-        for(auto x:fList[i])sum+=x;
-        if((sum-xy[i])%2!=0){
-            cout << "No" <<endl;
-            return 0;
-        }else
+        if (i == 'F')
         {
-            int q=(sum-xy[i])/2;
-            vector<int> ans_list(1,0);
-            bool flag=false;
-            for(auto x:fList[i]){
-                for(auto l:ans_list){
-                    if(x+l<=q)ans_list.push_back(x+l);
-                    if(ans_list.back()==q){flag=true;break;}
-                }
-                if(flag)break;
-            }
-            if(!flag){cout<<"No"<<endl;return 0;}
+            forwardCount.back()++;
+        }
+        else
+        {
+            forwardCount.push_back(0);
         }
     }
-    cout << "Yes" << endl;
+
+    vector<set<int>> DP(2,{0});
+    for (size_t i = 0; i < forwardCount.size(); i++)
+    {
+        set<int> nextDP;
+        for (auto &&xx : DP[i % 2])
+        {
+            nextDP.insert(xx + forwardCount[i]);
+            if(i!=0)nextDP.insert(xx - forwardCount[i]);
+        }
+        DP[i % 2] = nextDP;
+    }
+    if (DP[0].count(x) && DP[1].count(y))
+    {
+        cout << "Yes" << endl;
+    }
+    else
+    {
+        cout << "No" << endl;
+    }
+
     return 0;
 }
