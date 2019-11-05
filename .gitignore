@@ -4,3 +4,4 @@
 *.exe
 *.out
 /.vscode/
+Cargo.toml
